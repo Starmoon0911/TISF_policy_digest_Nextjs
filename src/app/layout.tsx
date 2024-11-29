@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -31,11 +32,15 @@ export default function RootLayout({
         {/* Header */}
         <header className="bg-gray-800 text-white py-4 shadow-md">
           <div className="container mx-auto flex items-center">
-            <h1 className="text-2xl font-bold">My App</h1>
+            <Link href="/" passHref>
+              <h1 className="text-2xl font-bold cursor-pointer ml-4 hover:text-gray-400">
+                政文導讀
+              </h1>
+            </Link>
           </div>
         </header>
         {/* Main Content */}
-        <main className="container mx-auto px-4 py-6">{children}</main>
+        <main className="container mx-auto">{children}</main>
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 'use client';
-
+import axios from '@/api/axios'
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { MdPreview, MdCatalog } from 'md-editor-rt';
@@ -16,17 +16,14 @@ export default function NewsDetail() {
 
     const fetchNews = async () => {
       try {
-        const response = await fetch(`http://localhost:9000/api/v1/news/executive?id=${id}`);
+        const response = await axios.get(`http://192.168.0.123:9000/api/v1/news/executive?id=${id}`);
 
         if (response.status === 400) {
           setError('404');
           return;
         }
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setNews(data.data[0]);
+        const data = response.data;
+        setNews(data.data);
         console.log(data.data);
       } catch (error) {
         console.error('Error fetching news:', error);
@@ -84,6 +81,9 @@ export default function NewsDetail() {
         </svg>
         {new Date(news.date).toLocaleDateString()}
 
+
+      </div>
+      <div className='w-full'>
         <MdPreview
           id='hellworld'
           modelValue={news.agent.content}
