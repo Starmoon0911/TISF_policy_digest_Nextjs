@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -29,7 +28,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        {/* Header */}
+        <header className="bg-gray-800 text-white py-4 shadow-md">
+          <div className="container mx-auto flex items-center">
+            <h1 className="text-2xl font-bold">My App</h1>
+          </div>
+        </header>
+        {/* Main Content */}
+        <main className="container mx-auto px-4 py-6">{children}</main>
       </body>
     </html>
   );

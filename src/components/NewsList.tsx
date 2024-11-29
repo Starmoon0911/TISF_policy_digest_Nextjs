@@ -1,46 +1,117 @@
-'use client'
-import React, { useEffect, useState } from "react"
-import { format } from "date-fns"
+'use client';
 
-interface NewsData {
-    _id: string
-    title: string
-    date: Date
-    desc: string
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+
+// 定義 NewsItem 型別
+interface NewsItem {
+  _id: string;
+  title: string;
+  description: string;
+  agent: {
+    title: string;
+    content: string;
+  };
+  date: Date;
 }
 
-interface NewsListProps {
-    data: NewsData[]
-}
+export default function NewsList() {
+  const router = useRouter();
+  const [data, setData] = useState<NewsItem[]>([]); // 指定型別為 NewsItem[]
+  const [page, setPage] = useState<number>(1); // 分頁狀態
+  const [loading, setLoading] = useState<boolean>(false); // 加載狀態
+  const bottomRef = useRef<HTMLDivElement>(null); // 觀察器參考
 
-export default function NewsList({ data }: NewsListProps) {
-    const [isAnimating, setIsAnimating] = useState(false);
+  // 加載新聞數據
+  const fetchNews = async (currentPage: number) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:9000/api/v1/news/executive?page=${currentPage}`);
 
-    // 每次 data 變更時觸發動畫
-    useEffect(() => {
-        setIsAnimating(false);
-        const timer = setTimeout(() => setIsAnimating(true), 100);
-        return () => clearTimeout(timer);
-    }, [data]);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const responseData = await response.json();
+      if (responseData?.data) {
+        setData((prevData) => [...prevData, ...responseData.data]); // 合併新數據
+      }
+    } catch (error) {
+      console.error('Error fetching news:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // 初始加載
+  useEffect(() => {
+    fetchNews(page);
+  }, [page]);
+
+  // Intersection Observer 設定
+  useEffect(() => {
+    if (!bottomRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading) {
+          setPage((prevPage) => prevPage + 1); // 滑到底時分頁 +1
+        }
+      },
+      { threshold: 1.0 } // 完全進入視口時觸發
+    );
+
+    observer.observe(bottomRef.current);
+
+    return () => observer.disconnect(); // 清除觀察器
+  }, [loading]);
+
+  if (data.length === 0) {
     return (
-        <div className="container mx-auto p-4">
-            <h2 className="text-2xl font-bold text-center mb-6">最新新聞</h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {data.map((news, index) => (
-                    <div
-                        key={news._id}
-                        className={`p-4 border rounded-lg shadow-lg bg-white transform transition-all duration-500 ease-in-out
-                          ${isAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
-                        `}
-                        style={{ transitionDelay: `${index * 100}ms` }} // 瀑布式延遲
-                    >
-                        <h3 className="border-b-2 border-gray-200 text-2xl font-semibold text-gray-800 mb-2">{news.title}</h3>
-                        <p className="text-gray-600 font-semibold text-sm mb-2">{news.desc}</p>
-                        <p className="text-gray-500 text-sm">{format(new Date(news.date), "yyyy/MM/dd")}</p>
-                    </div>
-                ))}
-            </div>
-        </div>
-    )
+      <div className="text-center">
+        <p className="text-gray-600">我們好像錯過了最新時事...</p>
+      </div>
+    );
+  }
+
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+  };
+
+  return (
+    <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {data.map((item, index) => (
+          <Card
+            key={index}
+            className={`flex flex-col border-t border-gray-200 h-full opacity-0 animate-slide-in delay-${index * 100}`}
+            onClick={() => {
+              router.push(`/news/${item._id}`);
+            }}
+          >
+            <CardHeader>
+              <CardTitle className="text-xl">{item.agent.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 flex flex-col">
+              <CardDescription className="flex-1">
+                {truncateText(item.description, 40)}
+              </CardDescription>
+              <p className="text-sm text-gray-500 mt-2">
+                {new Date(item.date).toLocaleDateString()}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* 加載更多標示 */}
+      <div ref={bottomRef} className="text-center my-4">
+        {loading ? (
+          <p className="text-gray-500">載入中...</p>
+        ) : (
+          <p className="text-gray-500">向下滑動以加載更多</p>
+        )}
+      </div>
+    </div>
+  );
 }
