@@ -1,7 +1,7 @@
 'use client';
 import axios from '@/api/axios';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 
 // 定義 NewsItem 型別
@@ -28,16 +28,17 @@ export default function NewsList({ source }: NewsListProps) {
   const [loading, setLoading] = useState<boolean>(false); // 加載狀態
   const [noMore, setNoMore] = useState<boolean>(false); // 無更多資料標記
   const bottomRef = useRef<HTMLDivElement>(null); // 分頁觀察器
+
   // 重置資料
-  const resetData = () => {
+  const resetData = useCallback(() => {
     setData([]);
     setPage(1);
     setLoading(false);
     setNoMore(false);
-  };
+  }, []);
 
   // 加載新聞數據
-  const fetchNews = async (currentPage: number) => {
+  const fetchNews = useCallback(async (currentPage: number) => {
     if (noMore || loading) return; // Prevent duplicate requests or loading when there's no more data
     try {
       setLoading(true);
@@ -59,7 +60,6 @@ export default function NewsList({ source }: NewsListProps) {
       // Update data
       if (responseData.data) {
         setData((prevData) => (currentPage === 1 ? responseData.data : [...prevData, ...responseData.data]));
-        console.log(data)
       }
     } catch (error) {
       console.error('Error fetching news:', error);
@@ -67,21 +67,20 @@ export default function NewsList({ source }: NewsListProps) {
     } finally {
       setLoading(false);
     }
-  };
-
+  }, [loading, noMore, source]);
 
   // 當 `source` 變更時，重置並重新請求資料
   useEffect(() => {
     resetData();
     fetchNews(1); // 初始化請求
-  }, [source]);
+  }, [source, fetchNews, resetData]);
 
   // 當頁面改變時，請求新資料
   useEffect(() => {
     if (page > 1) {
       fetchNews(page);
     }
-  }, [page]);
+  }, [page, fetchNews]);
 
   // Intersection Observer 設定（分頁加載）
   useEffect(() => {
@@ -130,10 +129,8 @@ export default function NewsList({ source }: NewsListProps) {
               </div>
             </CardFooter>
           </Card>
-
         ))}
       </div>
-
 
       <div ref={bottomRef} className="text-center my-4">
         {noMore ? <p className="text-gray-500">沒有更多了...</p> : null}

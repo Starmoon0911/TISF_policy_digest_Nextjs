@@ -5,10 +5,19 @@ import { useParams } from 'next/navigation';
 import { MdPreview, MdCatalog } from 'md-editor-rt';
 import 'md-editor-rt/lib/preview.css';
 
+// 定義 NewsItem 型別
+interface NewsItem {
+  agent: {
+    title: string;
+    content: string;
+  };
+  date: string; // Assuming date is a string, adjust if needed
+}
+
 export default function NewsDetail() {
   const params = useParams();
   const { id } = params; // 獲取路由參數 `id`
-  const [news, setNews] = useState<any>(null);
+  const [news, setNews] = useState<NewsItem | null>(null); // 指定型別為 NewsItem 或 null
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -60,6 +69,7 @@ export default function NewsDetail() {
       </div>
     );
   }
+
   const scrollElement = document.documentElement;
   return (
     <div className="container mx-auto p-4">
@@ -80,15 +90,13 @@ export default function NewsDetail() {
           />
         </svg>
         {new Date(news.date).toLocaleDateString()}
-
-
       </div>
-      <div className='w-full'>
+      <div className="w-full">
         <MdPreview
-          id='hellworld'
+          id="hellworld"
           modelValue={news.agent.content}
         />
-        <MdCatalog editorId='hellworld' scrollElement={scrollElement} />
+        <MdCatalog editorId="hellworld" scrollElement={scrollElement} />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 // pages/index.tsx
 'use client'
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import background from '../static/background.png';
 import dynamic from 'next/dynamic';
