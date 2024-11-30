@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { MdPreview, MdCatalog } from 'md-editor-rt';
 import 'md-editor-rt/lib/preview.css';
-
+import FeedbackComponent from '@/components/reaction';
 // 定義 NewsItem 型別
 interface NewsItem {
   agent: {
@@ -98,6 +98,7 @@ export default function NewsDetail() {
         />
         <MdCatalog editorId="hellworld" scrollElement={scrollElement} />
       </div>
+      <FeedbackComponent />
     </div>
   );
 }
