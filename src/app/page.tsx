@@ -14,12 +14,13 @@ export default function Home() {
   const newsListRef = useRef<HTMLDivElement>(null);
 
   const handleSelectSource = (selectedSource: string) => {
+    if(source === selectedSource) return;
     setSource(selectedSource);
     if (newsListRef.current) {
       newsListRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };
- 
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -40,8 +41,10 @@ export default function Home() {
         {/* 添加 key 屬性，讓 NewsList 在每次篩選時重新渲染 */}
         <div ref={newsListRef}>
           <NewsList
-            key={source || 'all'} // 若 source 變更，key 值會改變
+            key={source} // 強制讓 NewsList 隨 source 重新掛載
+            source={source || ''}
           />
+
         </div>
       </main>
     </div>

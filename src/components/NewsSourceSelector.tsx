@@ -1,22 +1,23 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 import { Book, Building, Car } from 'lucide-react';
 
 interface NewsSourceSelectorProps {
-  onSelectSource: (sourceId: string) => void; // 新增 onSelectSource prop
+  onSelectSource: (sourceId: string) => void; // 父層傳遞回調函數
 }
 
 export default function NewsSourceSelector({ onSelectSource }: NewsSourceSelectorProps) {
   const sources = [
-    { id: "executive", name: "行政院", icon: <Building className="h-12 w-12 text-gray-500" /> },
-    { id: "education", name: "教育部", icon: <Book className="h-12 w-12 text-green-500" /> },
-    { id: "transport", name: "交通部", icon: <Car className="h-12 w-12 text-red-500" /> },
+    { id: 'executive', name: '行政院', icon: <Building className="h-12 w-12 text-gray-500" /> },
+    { id: 'education', name: '教育部', icon: <Book className="h-12 w-12 text-green-500" /> },
+    { id: 'transport', name: '交通部', icon: <Car className="h-12 w-12 text-red-500" /> },
   ];
   const [selectedSource, setSelectedSource] = useState<string>('');
 
   const handleClick = (sourceId: string) => {
+    if (selectedSource === sourceId) return;
+    onSelectSource(sourceId);
     setSelectedSource(sourceId);
-    onSelectSource(sourceId); // 傳遞選擇的 sourceId 回到父組件
   };
 
   return (

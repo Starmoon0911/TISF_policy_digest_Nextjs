@@ -16,7 +16,7 @@ export default function NewsDetail() {
 
     const fetchNews = async () => {
       try {
-        const response = await axios.get(`http://192.168.0.123:9000/api/v1/news/executive?id=${id}`);
+        const response = await axios.get(`http://192.168.0.123:9000/api/v1/news?id=${id}`);
 
         if (response.status === 400) {
           setError('404');
