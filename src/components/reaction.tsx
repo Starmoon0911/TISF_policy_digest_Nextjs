@@ -1,8 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input'; // 假設這是ShadCN的Input組件
-import axios from 'axios';
-
+import axios from '@/api/axios'
 // 表情選項數據，包含表情符號與對應文字
 const emojiOptions = [
   { emoji: '😊', label: '滿意' },
