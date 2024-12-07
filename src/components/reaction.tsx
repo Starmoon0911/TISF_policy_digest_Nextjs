@@ -8,8 +8,10 @@ const emojiOptions = [
   { emoji: '😐', label: '普通' },
   { emoji: '😟', label: '不滿意' },
 ];
-
-export default function FeedbackComponent() {
+interface FeedbackComponentProps {
+  newsID: string;
+}
+export default function FeedbackComponent({ newsID }: FeedbackComponentProps) {
   const [selectedEmoji, setSelectedEmoji] = useState<{ emoji: string; label: string } | null>(null); // 當前選擇的表情
   const [feedback, setFeedback] = useState<string>(''); // 使用者的意見回復
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false); // 提交後的狀態
@@ -39,6 +41,7 @@ export default function FeedbackComponent() {
       const response = await axios.post('/api/v1/feedback', {
         emoji: selectedEmoji,
         feedback,
+        newsID:newsID,
       });
 
       if (response.data.success) {
@@ -64,11 +67,10 @@ export default function FeedbackComponent() {
           <button
             key={index}
             onClick={() => handleEmojiClick(emoji)}
-            className={`flex flex-col items-center text-3xl transition-transform duration-200 ${
-              selectedEmoji?.emoji === emoji.emoji
+            className={`flex flex-col items-center text-3xl transition-transform duration-200 ${selectedEmoji?.emoji === emoji.emoji
                 ? 'text-blue-500 transform scale-125'
                 : 'text-gray-500'
-            }`}
+              }`}
           >
             <span>{emoji.emoji}</span>
             <span className="text-sm mt-1">{emoji.label}</span>

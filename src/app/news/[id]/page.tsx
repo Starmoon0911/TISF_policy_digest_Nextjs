@@ -17,8 +17,9 @@ interface NewsItem {
 
 
 export default function NewsDetail() {
-  const params = useParams();
-  const { id } = params; // 獲取路由參數 `id`
+  const params = useParams<{ id: string }>();
+  const { id } = params;
+
   const [news, setNews] = useState<NewsItem | null>(null); // 指定型別為 NewsItem 或 null
   const [error, setError] = useState<string | null>(null);
 
@@ -100,7 +101,8 @@ export default function NewsDetail() {
         />
         <MdCatalog editorId="hellworld" scrollElement={scrollElement} />
       </div>
-      <FeedbackComponent />
+      <FeedbackComponent newsID={id} />
+
     </div>
   );
 }
