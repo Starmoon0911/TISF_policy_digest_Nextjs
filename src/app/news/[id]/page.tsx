@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { MdPreview, MdCatalog } from 'md-editor-rt';
 import 'md-editor-rt/lib/preview.css';
+import { Button } from '@/components/ui/button';
 import FeedbackComponent from '@/components/reaction';
 // 定義 NewsItem 型別
 interface NewsItem {
@@ -75,34 +76,43 @@ export default function NewsDetail() {
 
   const scrollElement = document.documentElement;
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-4xl mt-4 font-bold">{news.agent.title}</h1>
-      <div className="mt-2 flex items-center text-gray-500">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.4}
-          stroke="currentColor"
-          className="w-5 h-5 mt-1 mr-1"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 6v6l4 2m6-5.5a9.5 9.5 0 11-19 0 9.5 9.5 0 0119 0z"
-          />
-        </svg>
-        {new Date(news.date).toLocaleDateString()}
+    <>
+      <div className='mt-6'>
+        <Button variant="outline" onClick={() => (window.location.href = '/')}>
+          回首頁
+        </Button>
       </div>
-      <div className="w-full">
-        <MdPreview
-          id="hellworld"
-          modelValue={news.agent.content}
-        />
-        <MdCatalog editorId="hellworld" scrollElement={scrollElement} />
-      </div>
-      <FeedbackComponent newsID={id} />
+      <div className="container mx-auto p-4">
+        <h1 className="text-4xl mt-4 font-bold">{news.agent.title}</h1>
+        <div className="mt-2 flex items-center text-gray-500">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.4}
+            stroke="currentColor"
+            className="w-5 h-5 mt-1 mr-1"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 6v6l4 2m6-5.5a9.5 9.5 0 11-19 0 9.5 9.5 0 0119 0z"
+            />
+          </svg>
+          {new Date(news.date).toLocaleDateString()}
+        </div>
 
-    </div>
+        <div className="w-1/2">
+          <MdPreview
+            id="hellworld"
+            modelValue={news.agent.content}
+          />
+          <MdCatalog editorId="hellworld" scrollElement={scrollElement} />
+        </div>
+        <FeedbackComponent newsID={id} />
+
+      </div>
+    </>
+
   );
 }
