@@ -14,6 +14,8 @@ interface NewsItem {
   date: string; // Assuming date is a string, adjust if needed
 }
 
+
+
 export default function NewsDetail() {
   const params = useParams();
   const { id } = params; // 獲取路由參數 `id`
