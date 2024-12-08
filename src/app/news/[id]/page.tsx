@@ -102,7 +102,7 @@ export default function NewsDetail() {
           {new Date(news.date).toLocaleDateString()}
         </div>
 
-        <div className="w-1/2">
+        <div className="w-full">
           <MdPreview
             id="hellworld"
             modelValue={news.agent.content}
